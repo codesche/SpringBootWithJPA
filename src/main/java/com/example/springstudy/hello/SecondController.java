@@ -1,5 +1,6 @@
 package com.example.springstudy.hello;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,5 +23,24 @@ public class SecondController {
 
         return "hello spring";
     }
+
+    /**
+     * 4. 클라이언트 요청에 대한 Rest 형식의 함수를 작성해 보세요.
+     *   [조건]
+     * - Rest 컨트롤러 형식의 어노테이션 이용
+     * - 주소매핑 역시 Rest 형식의 어노테이션 이용
+     * - HTTP 메소드는 GET
+     * - 요청 주소는 "/hello-rest"
+     * - 리턴값은 ""hello rest"" 문자열 리턴"
+     */
+
+    @GetMapping("/hello-rest")
+    public String helloRest() {
+        return "hello rest";
+    }
+
+
+
+
 
 }
