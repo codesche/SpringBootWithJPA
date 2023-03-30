@@ -57,23 +57,40 @@ public class ApiNoticeController {
      *   게시글ID = 2, 제목 = 두번째 공지사항입니다, 내용 = 두번째 공지사항 내용입니다, 등록일 = 2021-1-31
      */
 
+//    @GetMapping("/api/notice")
+//    public List<NoticeModel> notice() {
+//        List<NoticeModel> noticeList = new ArrayList<>();
+//
+//        noticeList.add(NoticeModel.builder()
+//                    .id(1)
+//                    .title("공지사항입니다.")
+//                    .contents("공지사항 내용입니다.")
+//                    .regDt(LocalDateTime.of(2021, 1, 30, 0, 0))
+//                    .build());
+//
+//        noticeList.add(NoticeModel.builder()
+//                    .id(2)
+//                    .title("두번째 공지사항입니다.")
+//                    .contents("두번째 공지사항 내용입니다.")
+//                    .regDt(LocalDateTime.of(2021, 1, 31, 0, 0))
+//                    .build());
+//
+//        return noticeList;
+//    }
+
+    /**
+     * 9. 공지사항 게시판의 목록에 대한 요청을 처리하는 API를 만들어 보세요.
+     * [조건]
+     * - REST API 형식으로 구현
+     * - HTTP METHOD 는 GET
+     * - 요청 주소는 "/api/notice"
+     * - 리턴값은 공지사항 게시판의 내용을 추상화한 모델(게시글ID, 제목, 내용, 등록일)이며 복수형태의 데이터를 리턴
+     */
+
     @GetMapping("/api/notice")
     public List<NoticeModel> notice() {
+
         List<NoticeModel> noticeList = new ArrayList<>();
-
-        noticeList.add(NoticeModel.builder()
-                    .id(1)
-                    .title("공지사항입니다.")
-                    .contents("공지사항 내용입니다.")
-                    .regDt(LocalDateTime.of(2021, 1, 30, 0, 0))
-                    .build());
-
-        noticeList.add(NoticeModel.builder()
-                    .id(2)
-                    .title("두번째 공지사항입니다.")
-                    .contents("두번째 공지사항 내용입니다.")
-                    .regDt(LocalDateTime.of(2021, 1, 31, 0, 0))
-                    .build());
 
         return noticeList;
     }
