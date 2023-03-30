@@ -25,7 +25,7 @@ public class SecondController {
     }
 
     /**
-     * 4. 클라이언트 요청에 대한 Rest 형식의 함수를 작성해 보세요.
+     * 4. 클라이언트 요청에 대한 Rest 형식의 함수를 작성
      *   [조건]
      * - Rest 컨트롤러 형식의 어노테이션 이용
      * - 주소매핑 역시 Rest 형식의 어노테이션 이용
@@ -40,7 +40,7 @@ public class SecondController {
     }
 
     /**
-     5. 클라이언트 요청에 대한 Rest API 형식의 함수를 작성해 보세요.
+     5. 클라이언트 요청에 대한 Rest API 형식의 함수를 작성
      [조건]
      - Rest 컨트롤러 형식의 어노테이션 이용
      - 주소매핑 역시 Rest 형식의 어노테이션 이용
