@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -141,15 +142,35 @@ public class ApiNoticeController {
      * [조건]
      * - REST API 형식으로 구현
      * - HTTP METHOD 는 POST
-     * - 요청 주소는 "/api/notice2"
+     * - 요청 주소는 "/api/notice"
      * - 전달되는 파라미터는 x-www-form-urlencoded 형식의 제목, 내용을 입력 받음
      * - 파라미터를 공지사항 모델로 추상화하여 전달받음
      * - 리턴값은 입력된 형태에 게시글ID(2)과 등록일자(현재시간)을 추가하여 모델 형태로 리턴
      */
 
+//    @PostMapping("/api/notice")
+//    public NoticeModel addNotice(NoticeModel noticeModel) {
+//        noticeModel.setId(2);
+//        noticeModel.setRegDt(LocalDateTime.now());
+//
+//        return noticeModel;
+//    }
+
+    /**
+     * 13. 공지사항에 글을 등록하기 위해서 글작성에 대한 API를 만들어 보세요.
+     * [조건]
+     * - REST API 형식으로 구현
+     * - HTTP METHOD 는 POST
+     * - 요청 주소는 "/api/notice"
+     * - 전달되는 파라미터는 application/json 형식의 제목, 내용을 입력 받음
+     * - 파라미터를 공지사항 모델로 추상화하여 전달받음
+     * - 리턴값은 입력된 형태에 게시글ID(3)과 등록일자(현재시간)을 추가하여 모델 형태로 리턴
+     */
+
     @PostMapping("/api/notice")
-    public NoticeModel addNotice(NoticeModel noticeModel) {
-        noticeModel.setId(2);
+    public NoticeModel addNotice(@RequestBody NoticeModel noticeModel) {
+
+        noticeModel.setId(3);
         noticeModel.setRegDt(LocalDateTime.now());
 
         return noticeModel;
