@@ -123,17 +123,37 @@ public class ApiNoticeController {
      * - 리턴값은 입력된 형태에 게시글ID(1)를 추가하여 모델 형태로 리턴
      */
 
+//    @PostMapping("/api/notice")
+//    public NoticeModel addNotice(@RequestParam String title, @RequestParam String contents) {
+//
+//        NoticeModel notice = NoticeModel.builder()
+//                                        .id(1)
+//                                        .title(title)
+//                                        .contents(contents)
+//                                        .regDt(LocalDateTime.now())
+//                                        .build();
+//
+//        return notice;
+//    }
+
+    /**
+     * 12. 공지사항에 글을 등록하기 위해서 글작성에 대한 API를 만들어 보기.
+     * [조건]
+     * - REST API 형식으로 구현
+     * - HTTP METHOD 는 POST
+     * - 요청 주소는 "/api/notice2"
+     * - 전달되는 파라미터는 x-www-form-urlencoded 형식의 제목, 내용을 입력 받음
+     * - 파라미터를 공지사항 모델로 추상화하여 전달받음
+     * - 리턴값은 입력된 형태에 게시글ID(2)과 등록일자(현재시간)을 추가하여 모델 형태로 리턴
+     */
+
     @PostMapping("/api/notice")
-    public NoticeModel addNotice(@RequestParam String title, @RequestParam String contents) {
+    public NoticeModel addNotice(NoticeModel noticeModel) {
+        noticeModel.setId(2);
+        noticeModel.setRegDt(LocalDateTime.now());
 
-        NoticeModel notice = NoticeModel.builder()
-                                        .id(1)
-                                        .title(title)
-                                        .contents(contents)
-                                        .regDt(LocalDateTime.now())
-                                        .build();
-
-        return notice;
+        return noticeModel;
     }
+
 
 }
