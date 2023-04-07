@@ -1,17 +1,24 @@
 package com.example.springstudy.notice.controller;
 
+import com.example.springstudy.notice.entity.Notice;
+import com.example.springstudy.notice.model.NoticeInput;
 import com.example.springstudy.notice.model.NoticeModel;
+import com.example.springstudy.notice.repository.NoticeRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequiredArgsConstructor
 @RestController
 public class ApiNoticeController {
+
+    private final NoticeRepository noticeRepository;
 
     /**
      * 6. 공지사항 게시판의 목록에 대한 요청을 처리하는 API를 만들어 보기
@@ -167,13 +174,40 @@ public class ApiNoticeController {
      * - 리턴값은 입력된 형태에 게시글ID(3)과 등록일자(현재시간)을 추가하여 모델 형태로 리턴
      */
 
+//    @PostMapping("/api/notice")
+//    public NoticeModel addNotice(@RequestBody NoticeModel noticeModel) {
+//
+//        noticeModel.setId(3);
+//        noticeModel.setRegDt(LocalDateTime.now());
+//
+//        return noticeModel;
+//    }
+
+    /**
+     * 14. 공지사항에 글을 등록하기 위한 글작성에 대한 API를 만들어 보기.
+     * [조건]
+     * - REST API 형식으로 구현
+     * - HTTP METHOD 는 POST
+     * - 요청 주소는 "/api/notice4"
+     * - 전달되는 값은 application/json 형식의 제목, 내용을 입력 받음
+     * - 전달된 값을 저장하기 위한 JPA Repository 와 Entity를 통해서 Database 에 저장
+     * - 리턴값은 저장된 id값이 포함된 Entity 리턴
+     *   [이미설정되어 있는 부분]
+     *   -h2db memorydb
+     */
+
     @PostMapping("/api/notice")
-    public NoticeModel addNotice(@RequestBody NoticeModel noticeModel) {
+    public Notice addNotice(@RequestBody NoticeInput noticeInput) {
 
-        noticeModel.setId(3);
-        noticeModel.setRegDt(LocalDateTime.now());
+        Notice notice = Notice.builder()
+            .title(noticeInput.getTitle())
+            .contents(noticeInput.getContents())
+            .regDate(LocalDateTime.now())
+            .build();
 
-        return noticeModel;
+        noticeRepository.save(notice);
+
+        return notice;
     }
 
 

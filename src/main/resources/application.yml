@@ -14,8 +14,8 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
-    generate-ddl: false
+      ddl-auto: create-drop
+    generate-ddl: true
 
     properties:
       format_sql: true
@@ -26,6 +26,9 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
+
+  mustache:
+    suffix: .html
 
 logging:
   level:
