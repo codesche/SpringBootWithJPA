@@ -12,6 +12,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -370,6 +371,22 @@ public class ApiNoticeController {
 
         noticeRepository.save(notice);
     }
+
+    /**
+     * 21. 공지사항의 글을 삭제하기 위한 API를 만들어 보기
+     * [조건]
+     * - REST API 형식으로 구현
+     * - HTTP METHOD 는 DELETE
+     * - 요청 주소는 "/api/notices/1" ("1"은 공지사항의 글ID로 동적으로 변함)
+     */
+    @DeleteMapping("/api/notice/{id}")
+    public void deleteNotice(@PathVariable Long id) {
+        Notice notice = noticeRepository.findById(id)
+            .orElseThrow(() -> new NoticeNotFoundException("공지사항의 글이 존재하지 않습니다."));
+
+        noticeRepository.delete(notice);
+    }
+
 
 
 }
