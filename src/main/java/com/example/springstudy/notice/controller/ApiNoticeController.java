@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -259,6 +260,29 @@ public class ApiNoticeController {
         }
 
         return null;
+    }
+
+    /**
+     * 17. 공지사항에 글을 수정하기 위한 글수정에 대한 API를 만들어 보기
+     * [조건]
+     * - REST API 형식으로 구현
+     * - HTTP METHOD 는 PUT
+     * - 요청 주소는 "/api/notice/1" ("1"은 공지사항의 글ID로 동적으로 변함)
+     * - 전달되는 값은 application/json 형식의 공지사항 글ID, 제목, 내용을 입력 받음
+     * - 공지사항 수정일은 현재시간을 저장, 공지사항 조회수와 좋아요수는 변경하지 않음
+     * - 데이터를 수정한은 경우는 Data매핑에 대한 Entity로 필요없는 항목까지 받지 말고 필요한 데이터만 입력받게 작성
+     * - 전달된 값을 수정하기 위한 JPA Repository 와 Entity를 통해서 Database 에 수정
+     */
+    @PutMapping("/api/notice/{id}")
+    public void updateNotice(@PathVariable Long id, @RequestBody NoticeInput noticeInput) {
+
+        Optional<Notice> notice = noticeRepository.findById(id);
+        if (notice.isPresent()) {
+            notice.get().setTitle(noticeInput.getTitle());
+            notice.get().setContents(noticeInput.getContents());
+            notice.get().setUpdateDate(LocalDateTime.now());
+            noticeRepository.save(notice.get());
+        }
     }
 
 
