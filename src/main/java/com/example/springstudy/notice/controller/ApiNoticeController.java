@@ -7,11 +7,12 @@ import com.example.springstudy.notice.repository.NoticeRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -238,6 +239,26 @@ public class ApiNoticeController {
         Notice resultNotice = noticeRepository.save(notice);
 
         return resultNotice;
+    }
+
+    /**
+     * 16. 공지사항에 글을 수정하기 위한 상세정보 요청에 대한 API를 만들어 보기
+     * [조건]
+     * - REST API 형식으로 구현
+     * - HTTP METHOD 는 GET
+     * - 요청 주소는 "/api/notice/1" ("1"은 공지사항의 글ID로 동적으로 변함)
+     * - Database에 프로그램 실행시 H2DB에 INSERT 되어 있음
+     * - 조회된 결과가 있는 경우 Entity 리턴를 없는 경우는 null을 리턴함
+     */
+    @GetMapping("/api/notice/{id}")
+    public Notice notice(@PathVariable Long id) {
+
+        Optional<Notice> notice = noticeRepository.findById(id);
+        if (notice.isPresent()) {
+            return notice.get();
+        }
+
+        return null;
     }
 
 
