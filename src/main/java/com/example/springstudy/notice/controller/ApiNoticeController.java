@@ -379,6 +379,25 @@ public class ApiNoticeController {
      * - HTTP METHOD 는 DELETE
      * - 요청 주소는 "/api/notices/1" ("1"은 공지사항의 글ID로 동적으로 변함)
      */
+//    @DeleteMapping("/api/notice/{id}")
+//    public void deleteNotice(@PathVariable Long id) {
+//
+//        Optional<Notice> notice = noticeRepository.findById(id);
+//        if (notice.isPresent()) {
+//            noticeRepository.delete(notice.get());
+//        }
+//
+//    }
+
+    /**
+     * 22. 공지사항의 글을 삭제하기 위한 API를 만들어 보기
+     * [조건]
+     * - REST API 형식으로 구현
+     * - HTTP METHOD 는 DELETE
+     * - 요청 주소는 "/api/notices2/1" ("1"은 공지사항의 글ID로 동적으로 변함)
+     * - 전달받은 공지사항의 내용이 조회가 되자 않는 경우 NotFundException을 발생시킴
+     * - 이에 대한 결과는 400에러와 "내용이 존재하지 않습니다." 라는 메시지를 리턴함
+     */
     @DeleteMapping("/api/notice/{id}")
     public void deleteNotice(@PathVariable Long id) {
         Notice notice = noticeRepository.findById(id)
