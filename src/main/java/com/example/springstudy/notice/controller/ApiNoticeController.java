@@ -463,4 +463,17 @@ public class ApiNoticeController {
         noticeRepository.saveAll(noticeList);
     }
 
+    /**
+     * 25. 공지사항의 모든 글을 삭제하기 위한 API를 만들어 보기
+     * [조건]
+     * - REST API 형식으로 구현
+     * - HTTP METHOD는 DELETE
+     * - 요청 주소는 "/api/notices5"
+     */
+
+    @DeleteMapping("/api/notice/all")
+    public void deleteAll() {
+        noticeRepository.deleteAll();
+    }
+
 }
