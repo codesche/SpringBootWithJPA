@@ -1,6 +1,7 @@
 package com.example.springstudy.notice.controller;
 
 import com.example.springstudy.notice.entity.Notice;
+import com.example.springstudy.notice.exception.AlreadyDeletedException;
 import com.example.springstudy.notice.exception.NoticeNotFoundException;
 import com.example.springstudy.notice.model.NoticeInput;
 import com.example.springstudy.notice.model.NoticeModel;
@@ -398,14 +399,43 @@ public class ApiNoticeController {
      * - 전달받은 공지사항의 내용이 조회가 되자 않는 경우 NotFundException을 발생시킴
      * - 이에 대한 결과는 400에러와 "내용이 존재하지 않습니다." 라는 메시지를 리턴함
      */
+//    @DeleteMapping("/api/notice/{id}")
+//    public void deleteNotice(@PathVariable Long id) {
+//        Notice notice = noticeRepository.findById(id)
+//            .orElseThrow(() -> new NoticeNotFoundException("공지사항의 글이 존재하지 않습니다."));
+//
+//        noticeRepository.delete(notice);
+//    }
+
+    /**
+     *
+     * 23. 공지사항의 글을 삭제하기 위한 API를 만들어 보기
+     * [조건]
+     * - REST API 형식으로 구현
+     * - HTTP METHOD 는 DELETE
+     * - 요청 주소는 "/api/notices3/1" ("1"은 공지사항의 글ID로 동적으로 변함)
+     * - 게시판의 글을 물리적으로 삭제하지 않고 삭제 플래그값을 이용하여 삭제를 진행함
+     */
+
+    @ExceptionHandler(NoticeNotFoundException.class)
+    public ResponseEntity<String> handlerAlreadyDeletedException(NoticeNotFoundException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.OK);
+    }
+
     @DeleteMapping("/api/notice/{id}")
     public void deleteNotice(@PathVariable Long id) {
+
         Notice notice = noticeRepository.findById(id)
             .orElseThrow(() -> new NoticeNotFoundException("공지사항의 글이 존재하지 않습니다."));
 
-        noticeRepository.delete(notice);
+        if (notice.isDeleted()) {
+            throw new AlreadyDeletedException("이미 삭제된 공지사항의 글입니다.");
+        }
+
+        notice.setDeleted(true);
+        notice.setDeletedDate(LocalDateTime.now());
+
+        noticeRepository.save(notice);
     }
-
-
 
 }
