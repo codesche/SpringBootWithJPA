@@ -234,21 +234,21 @@ public class ApiNoticeController {
      *   -h2db memorydb
      */
 
-    @PostMapping("/api/notice")
-    public Notice addNotice(@RequestBody NoticeInput noticeInput) {
-
-        Notice notice = Notice.builder()
-                            .title(noticeInput.getTitle())
-                            .contents(noticeInput.getContents())
-                            .regDate(LocalDateTime.now())
-                            .hits(0)
-                            .likes(0)
-                            .build();
-
-        Notice resultNotice = noticeRepository.save(notice);
-
-        return resultNotice;
-    }
+//    @PostMapping("/api/notice")
+//    public Notice addNotice(@RequestBody NoticeInput noticeInput) {
+//
+//        Notice notice = Notice.builder()
+//                            .title(noticeInput.getTitle())
+//                            .contents(noticeInput.getContents())
+//                            .regDate(LocalDateTime.now())
+//                            .hits(0)
+//                            .likes(0)
+//                            .build();
+//
+//        Notice resultNotice = noticeRepository.save(notice);
+//
+//        return resultNotice;
+//    }
 
     /**
      * 16. 공지사항에 글을 수정하기 위한 상세정보 요청에 대한 API를 만들어 보기
@@ -474,6 +474,28 @@ public class ApiNoticeController {
     @DeleteMapping("/api/notice/all")
     public void deleteAll() {
         noticeRepository.deleteAll();
+    }
+
+    /**
+     * 26. 글을 작성할때 제목과 내용을 받아서 저장하는 API를 만들어 보기
+     * [조건]
+     * METHOD : POST
+     * DTO를 통한 파라미터를 형태로 받음
+     * 등록일은 현재일시, 조회수, 좋아요수는 0으로 설정
+     * 전달받은 파라미터를 통해서 데이터베이스에 저장함.
+     */
+    @PostMapping("/api/notice")
+    public void addNotice(@RequestBody NoticeInput noticeInput) {
+
+        Notice notice = Notice.builder()
+                            .title(noticeInput.getTitle())
+                            .contents(noticeInput.getContents())
+                            .hits(0)
+                            .likes(0)
+                            .regDate(LocalDateTime.now())
+                            .build();
+
+        noticeRepository.save(notice);
     }
 
 }
