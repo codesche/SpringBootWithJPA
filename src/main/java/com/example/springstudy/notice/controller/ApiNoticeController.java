@@ -6,14 +6,18 @@ import com.example.springstudy.notice.exception.NoticeNotFoundException;
 import com.example.springstudy.notice.model.NoticeDeleteInput;
 import com.example.springstudy.notice.model.NoticeInput;
 import com.example.springstudy.notice.model.NoticeModel;
+import com.example.springstudy.notice.model.ResponseError;
 import com.example.springstudy.notice.repository.NoticeRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -484,18 +488,59 @@ public class ApiNoticeController {
      * 등록일은 현재일시, 조회수, 좋아요수는 0으로 설정
      * 전달받은 파라미터를 통해서 데이터베이스에 저장함.
      */
+//    @PostMapping("/api/notice")
+//    public void addNotice(@RequestBody NoticeInput noticeInput) {
+//
+//        Notice notice = Notice.builder()
+//                            .title(noticeInput.getTitle())
+//                            .contents(noticeInput.getContents())
+//                            .hits(0)
+//                            .likes(0)
+//                            .regDate(LocalDateTime.now())
+//                            .build();
+//
+//        noticeRepository.save(notice);
+//    }
+
+    /**
+     * 27. 글을 작성할때 제목과 내용을 받아서 저장하는 API를 만들어 보기.
+     * [조건]
+     * 입력값은 입력DTO를 통해서 입력받음
+     * 제목과 내용은 필수 입력 조건임(입력되지 않은 경우 400 리턴)
+     * 예외발생시 각각의 에러를 취합하여 콜렉션형태로 리턴"
+     */
+
     @PostMapping("/api/notice")
-    public void addNotice(@RequestBody NoticeInput noticeInput) {
+    public ResponseEntity<Object> addNotice(@RequestBody @Valid NoticeInput noticeInput
+        , Errors errors) {
 
-        Notice notice = Notice.builder()
-                            .title(noticeInput.getTitle())
-                            .contents(noticeInput.getContents())
-                            .hits(0)
-                            .likes(0)
-                            .regDate(LocalDateTime.now())
-                            .build();
+//        if (noticeInput.getTitle() == null || noticeInput.getTitle().length() < 1
+//            || noticeInput.getContents() == null || noticeInput.getContents().length() < 1) {
+//
+//            return new ResponseEntity<>("입력값이 정확하지 않습니다", HttpStatus.BAD_REQUEST);
+//        }
 
-        noticeRepository.save(notice);
+        if (errors.hasErrors()) {
+            List<ResponseError> responseErrors = new ArrayList<>();
+
+            errors.getAllErrors().stream().forEach(e -> {
+                responseErrors.add(ResponseError.of((FieldError)e));
+            });
+
+            return new ResponseEntity<>(responseErrors, HttpStatus.BAD_REQUEST);
+        }
+
+        // 정상적인 저장....
+        noticeRepository.save(Notice.builder()
+                .title(noticeInput.getTitle())
+                .contents(noticeInput.getContents())
+                .hits(0)
+                .likes(0)
+                .regDate(LocalDateTime.now())
+                .build());
+
+        return ResponseEntity.ok().build();
     }
+
 
 }
