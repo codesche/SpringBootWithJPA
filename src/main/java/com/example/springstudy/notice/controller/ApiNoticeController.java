@@ -2,6 +2,7 @@ package com.example.springstudy.notice.controller;
 
 import com.example.springstudy.notice.entity.Notice;
 import com.example.springstudy.notice.exception.AlreadyDeletedException;
+import com.example.springstudy.notice.exception.DuplicateNoticeException;
 import com.example.springstudy.notice.exception.NoticeNotFoundException;
 import com.example.springstudy.notice.model.NoticeDeleteInput;
 import com.example.springstudy.notice.model.NoticeInput;
@@ -554,32 +555,35 @@ public class ApiNoticeController {
      * 내용의 경우 50자이상 1000자 이하로 입력
      * 예외발생시 각각의 에러를 취합하여 콜렉션형태로 리턴
      */
-    @PostMapping("/api/notice")
-    public ResponseEntity<Object> addNotice(@RequestBody @Valid NoticeInput noticeInput
-        , Errors errors) {
+//    @PostMapping("/api/notice")
+//    public ResponseEntity<Object> addNotice(@RequestBody @Valid NoticeInput noticeInput
+//        , Errors errors) {
+//
+//        if (errors.hasErrors()) {
+//            List<ResponseError> responseErrors = new ArrayList<>();
+//
+//            errors.getAllErrors().stream().forEach(e -> {
+//                responseErrors.add(ResponseError.of((FieldError)e));
+//            });
+//
+//            return new ResponseEntity<>(responseErrors, HttpStatus.BAD_REQUEST);
+//        }
+//
+//        // 정상적인 저장....
+//        noticeRepository.save(Notice.builder()
+//            .title(noticeInput.getTitle())
+//            .contents(noticeInput.getContents())
+//            .hits(0)
+//            .likes(0)
+//            .regDate(LocalDateTime.now())
+//            .build());
+//
+//        return ResponseEntity.ok().build();
+//    }
 
-        if (errors.hasErrors()) {
-            List<ResponseError> responseErrors = new ArrayList<>();
-
-            errors.getAllErrors().stream().forEach(e -> {
-                responseErrors.add(ResponseError.of((FieldError)e));
-            });
-
-            return new ResponseEntity<>(responseErrors, HttpStatus.BAD_REQUEST);
-        }
-
-        // 정상적인 저장....
-        noticeRepository.save(Notice.builder()
-            .title(noticeInput.getTitle())
-            .contents(noticeInput.getContents())
-            .hits(0)
-            .likes(0)
-            .regDate(LocalDateTime.now())
-            .build());
-
-        return ResponseEntity.ok().build();
-    }
-
+    /**
+     * 29. 데이터베이스에서 공지사항 목록중에서 파라미터로 전달된 개수만큼 최근 공지사항을리턴하는 API를 만들어 보기
+     */
     @GetMapping("/api/notice/latest/{size}")
     public Page<Notice> noticeLatest(@PathVariable int size) {
 
@@ -589,6 +593,41 @@ public class ApiNoticeController {
 
 
         return noticeList;
+    }
+
+    /**
+     * ####30. 공지사항의 내용을 등록한 이후에 바로 동일한 제목과 내용의 공지사항을 등록하는 경우 등록을 막는 API를 만들어 보기
+     * 중복 경우(조건: 동일제목, 동일내용과 등록일이 현재시간 기준 1분이내의 경우는 중복으로 판단함)
+     * 예외발생(DuplicateNoticeException)
+     */
+
+    @ExceptionHandler(DuplicateNoticeException.class)
+    public ResponseEntity<?> handlerDuplicateNoticeException(DuplicateNoticeException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/api/notice")
+    public void addNotice(@RequestBody @Valid NoticeInput noticeInput) {
+
+        // 중복체크
+        LocalDateTime checkDate = LocalDateTime.now().minusMinutes(1);
+
+        int noticeCount = noticeRepository.countByTitleAndContentsAndRegDateIsGreaterThanEqual(
+                        noticeInput.getTitle(),
+                        noticeInput.getContents(),
+                        checkDate);
+
+        if (noticeCount > 0) {
+            throw new DuplicateNoticeException("1분이내에 등록된 동일한 공지사항이 존재합니다.");
+        }
+
+        noticeRepository.save(Notice.builder()
+                                    .title(noticeInput.getTitle())
+                                    .contents(noticeInput.getContents())
+                                    .hits(0)
+                                    .likes(0)
+                                    .regDate(LocalDateTime.now())
+                                    .build());
     }
 
 }
