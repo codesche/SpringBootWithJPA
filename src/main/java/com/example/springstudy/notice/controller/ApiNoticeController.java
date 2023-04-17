@@ -510,15 +510,50 @@ public class ApiNoticeController {
      * 예외발생시 각각의 에러를 취합하여 콜렉션형태로 리턴"
      */
 
+//    @PostMapping("/api/notice")
+//    public ResponseEntity<Object> addNotice(@RequestBody @Valid NoticeInput noticeInput
+//        , Errors errors) {
+//
+////        if (noticeInput.getTitle() == null || noticeInput.getTitle().length() < 1
+////            || noticeInput.getContents() == null || noticeInput.getContents().length() < 1) {
+////
+////            return new ResponseEntity<>("입력값이 정확하지 않습니다", HttpStatus.BAD_REQUEST);
+////        }
+//
+//        if (errors.hasErrors()) {
+//            List<ResponseError> responseErrors = new ArrayList<>();
+//
+//            errors.getAllErrors().stream().forEach(e -> {
+//                responseErrors.add(ResponseError.of((FieldError)e));
+//            });
+//
+//            return new ResponseEntity<>(responseErrors, HttpStatus.BAD_REQUEST);
+//        }
+//
+//        // 정상적인 저장....
+//        noticeRepository.save(Notice.builder()
+//                .title(noticeInput.getTitle())
+//                .contents(noticeInput.getContents())
+//                .hits(0)
+//                .likes(0)
+//                .regDate(LocalDateTime.now())
+//                .build());
+//
+//        return ResponseEntity.ok().build();
+//    }
+
+    /**
+     * 28. 글을 작성할때 제목과 내용을 받아서 저장하는 API를 만들어 보기
+     * [조건]
+     * 입력값은 입력DTO를 통해서 입력받음
+     * 제목과 내용은 필수 입력 조건임(입력되지 않은 경우 400 리턴)
+     * 제목의 경우 10자이상 100자 이하로 입력
+     * 내용의 경우 50자이상 1000자 이하로 입력
+     * 예외발생시 각각의 에러를 취합하여 콜렉션형태로 리턴
+     */
     @PostMapping("/api/notice")
     public ResponseEntity<Object> addNotice(@RequestBody @Valid NoticeInput noticeInput
         , Errors errors) {
-
-//        if (noticeInput.getTitle() == null || noticeInput.getTitle().length() < 1
-//            || noticeInput.getContents() == null || noticeInput.getContents().length() < 1) {
-//
-//            return new ResponseEntity<>("입력값이 정확하지 않습니다", HttpStatus.BAD_REQUEST);
-//        }
 
         if (errors.hasErrors()) {
             List<ResponseError> responseErrors = new ArrayList<>();
@@ -532,12 +567,12 @@ public class ApiNoticeController {
 
         // 정상적인 저장....
         noticeRepository.save(Notice.builder()
-                .title(noticeInput.getTitle())
-                .contents(noticeInput.getContents())
-                .hits(0)
-                .likes(0)
-                .regDate(LocalDateTime.now())
-                .build());
+            .title(noticeInput.getTitle())
+            .contents(noticeInput.getContents())
+            .hits(0)
+            .likes(0)
+            .regDate(LocalDateTime.now())
+            .build());
 
         return ResponseEntity.ok().build();
     }
