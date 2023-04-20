@@ -1,6 +1,7 @@
 package com.example.springstudy.notice.repository;
 
 import com.example.springstudy.notice.entity.Notice;
+import com.example.springstudy.user.entity.User;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -18,5 +19,7 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
 
     int countByTitleAndContentsAndRegDateIsGreaterThanEqual(String title,
         String contents, LocalDateTime regDate);
+
+    List<Notice> findByUser(User user);
 
 }

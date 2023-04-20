@@ -1,6 +1,9 @@
 package com.example.springstudy.user.controller;
 
+import com.example.springstudy.notice.entity.Notice;
+import com.example.springstudy.notice.model.NoticeResponse;
 import com.example.springstudy.notice.model.ResponseError;
+import com.example.springstudy.notice.repository.NoticeRepository;
 import com.example.springstudy.user.entity.User;
 import com.example.springstudy.user.exception.UserNotFoundException;
 import com.example.springstudy.user.model.UserInput;
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiUserController {
 
     private final UserRepository userRepository;
+    private final NoticeRepository noticeRepository;
 
     /**
      * 31. 사용자 등록시 입력값이 유효하지 않은 경우 예외를 발생시키는 기능을 작성해 보기
@@ -133,6 +137,28 @@ public class ApiUserController {
         UserResponse userResponse = UserResponse.of(user);
 
         return userResponse;
+    }
+
+    /**
+     * 35. 내가 작성한 공지사항 목록에 대한 API를 작성해 보기
+     * 삭제일과 삭제자 아이디는 보안상 내리지 않음
+     * 작성자정보를 모두 내리지 않고, 작성자의 아이디와 이름만 내림
+     */
+    @GetMapping("/api/user/{id}/notice")
+    public List<NoticeResponse> UserNotice(@PathVariable Long id) {
+
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+
+        List<Notice> noticeList = noticeRepository.findByUser(user);
+
+        List<NoticeResponse> noticeResponseList = new ArrayList<>();
+
+        noticeList.stream().forEach((e) -> {
+            noticeResponseList.add(NoticeResponse.of(e));
+        });
+
+        return noticeResponseList;
     }
 
 }
