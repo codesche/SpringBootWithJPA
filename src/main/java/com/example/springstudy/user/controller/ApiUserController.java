@@ -4,6 +4,7 @@ import com.example.springstudy.notice.model.ResponseError;
 import com.example.springstudy.user.entity.User;
 import com.example.springstudy.user.exception.UserNotFoundException;
 import com.example.springstudy.user.model.UserInput;
+import com.example.springstudy.user.model.UserResponse;
 import com.example.springstudy.user.model.UserUpdate;
 import com.example.springstudy.user.repository.UserRepository;
 import java.time.LocalDateTime;
@@ -11,13 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -115,6 +115,24 @@ public class ApiUserController {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<?> UserNotFoundExceptionHandler(UserNotFoundException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * 34. 사용자 정보 조회(가입한 아이디에 대한)의 기능을 수행하는 API를 작성해 보기
+     * 다만, 보안상 비밀번호와 가입일, 회원정보 수정일은 내리지 않는다.
+     */
+
+    @GetMapping("/api/user/{id}")
+    public UserResponse getUser(@PathVariable Long id) {
+
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+
+        // UserResponse userResponse = new UserResponse(user);
+
+        UserResponse userResponse = UserResponse.of(user);
+
+        return userResponse;
     }
 
 }
