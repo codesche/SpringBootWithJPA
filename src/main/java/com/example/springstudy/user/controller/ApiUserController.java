@@ -6,8 +6,10 @@ import com.example.springstudy.notice.model.ResponseError;
 import com.example.springstudy.notice.repository.NoticeRepository;
 import com.example.springstudy.user.entity.User;
 import com.example.springstudy.user.exception.ExistsEmailException;
+import com.example.springstudy.user.exception.PasswordNotMatchException;
 import com.example.springstudy.user.exception.UserNotFoundException;
 import com.example.springstudy.user.model.UserInput;
+import com.example.springstudy.user.model.UserInputPassword;
 import com.example.springstudy.user.model.UserResponse;
 import com.example.springstudy.user.model.UserUpdate;
 import com.example.springstudy.user.repository.UserRepository;
@@ -22,6 +24,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -195,9 +198,38 @@ public class ApiUserController {
         return ResponseEntity.ok().build();
     }
 
-    @ExceptionHandler(ExistsEmailException.class)
-    public ResponseEntity<?> ExistsEmailExceptionHandler(ExistsEmailException exception) {
+    @ExceptionHandler(value = {ExistsEmailException.class, PasswordNotMatchException.class})
+    public ResponseEntity<?> ExistsEmailExceptionHandler(RuntimeException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * 37. 사용자 비밀번호를 수정하는 API를 작성해 보기
+     * - 이전비밀번호와 일치하는 경우 수정
+     * - 일치하지 않는경우 PasswordNotMatchException 발생
+     * - 발생메시지는 "비밀번호가 일치하지 않습니다."
+     */
+
+    @PatchMapping("/api/user/{id}/password")
+    public ResponseEntity<?> updateUserPassword(@PathVariable Long id,
+        @RequestBody UserInputPassword userInputPassword, Errors errors) {
+
+        List<ResponseError> responseErrorList = new ArrayList<>();
+        if (errors.hasErrors()) {
+            errors.getAllErrors().stream().forEach((e) -> {
+                responseErrorList.add(ResponseError.of((FieldError)e));
+            });
+            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+        }
+
+        User user = userRepository.findByIdAndPassword(id, userInputPassword.getPassword())
+            .orElseThrow(() -> new PasswordNotMatchException("비밀번호가 일치하지 않습니다"));
+
+        user.setPassword(userInputPassword.getNewPassword());
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok().build();
     }
 
 
