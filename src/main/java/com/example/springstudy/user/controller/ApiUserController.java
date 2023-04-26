@@ -9,6 +9,7 @@ import com.example.springstudy.user.exception.ExistsEmailException;
 import com.example.springstudy.user.exception.PasswordNotMatchException;
 import com.example.springstudy.user.exception.UserNotFoundException;
 import com.example.springstudy.user.model.UserInput;
+import com.example.springstudy.user.model.UserInputFind;
 import com.example.springstudy.user.model.UserInputPassword;
 import com.example.springstudy.user.model.UserResponse;
 import com.example.springstudy.user.model.UserUpdate;
@@ -299,5 +300,21 @@ public class ApiUserController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 40. 사용자 아이디(이메일)를 찾는 API를 작성해 보기
+     * - 이름과 전화번호에 해당하는 이메일을 찾는다.
+     */
+
+    @GetMapping("/api/user")
+    public ResponseEntity<?> findUser(@RequestBody UserInputFind userInputFind) {
+
+        User user = userRepository.findByUserNameAndPhone(
+            userInputFind.getUserName(), userInputFind.getPhone())
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+
+        UserResponse userResponse = UserResponse.of(user);
+
+        return ResponseEntity.ok().body(userResponse);
+    }
 
 }
