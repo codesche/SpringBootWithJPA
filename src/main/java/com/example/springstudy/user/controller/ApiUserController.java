@@ -1,8 +1,10 @@
 package com.example.springstudy.user.controller;
 
 import com.example.springstudy.notice.entity.Notice;
+import com.example.springstudy.notice.entity.NoticeLike;
 import com.example.springstudy.notice.model.NoticeResponse;
 import com.example.springstudy.notice.model.ResponseError;
+import com.example.springstudy.notice.repository.NoticeLikeRepository;
 import com.example.springstudy.notice.repository.NoticeRepository;
 import com.example.springstudy.user.entity.User;
 import com.example.springstudy.user.exception.ExistsEmailException;
@@ -42,6 +44,7 @@ public class ApiUserController {
 
     private final UserRepository userRepository;
     private final NoticeRepository noticeRepository;
+    private final NoticeLikeRepository noticeLikeRepository;
 
     /**
      * 31. 사용자 등록시 입력값이 유효하지 않은 경우 예외를 발생시키는 기능을 작성해 보기
@@ -351,6 +354,20 @@ public class ApiUserController {
     void sendSMS(String message) {
         System.out.println("[문자메시지전송]");
         System.out.println(message);
+    }
+
+    /**
+     * 42. 내가 좋아요한 공지사항을 보는 API를 작성해 보기
+     */
+
+    @GetMapping("/api/user/{id}/notice/like")
+    public List<NoticeLike> likeNotice(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+
+        List<NoticeLike> noticeLikeList = noticeLikeRepository.findByUser(user);
+
+        return noticeLikeList;
     }
 
 }
