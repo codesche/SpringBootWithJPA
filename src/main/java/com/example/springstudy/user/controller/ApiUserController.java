@@ -13,9 +13,11 @@ import com.example.springstudy.user.exception.UserNotFoundException;
 import com.example.springstudy.user.model.UserInput;
 import com.example.springstudy.user.model.UserInputFind;
 import com.example.springstudy.user.model.UserInputPassword;
+import com.example.springstudy.user.model.UserLogin;
 import com.example.springstudy.user.model.UserResponse;
 import com.example.springstudy.user.model.UserUpdate;
 import com.example.springstudy.user.repository.UserRepository;
+import com.example.springstudy.util.PasswordUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -267,7 +269,7 @@ public class ApiUserController {
         String encryptPassword = getEncryptPassword(userInput.getPassword());
 
         User user = User.builder()
-                        .email(userInput.getUserName())
+                        .email(userInput.getEmail())
                         .userName(userInput.getUserName())
                         .phone(userInput.getPhone())
                         .password(encryptPassword)
@@ -368,6 +370,35 @@ public class ApiUserController {
         List<NoticeLike> noticeLikeList = noticeLikeRepository.findByUser(user);
 
         return noticeLikeList;
+    }
+
+    /**
+     * 43. 사용자 이메일과 비밀번호를 통해서 JWT을 발행하는 API를 작성해 보기
+     * [조건]
+     * - JWT 토큰발행시 사용자 정보가 유효하지 않을때 예외 발생
+     * - 사용자정보가 존재하지 않는경우(UserNotFoundException) 에 대해서 예외 발생
+     * - 비밀번호가 일치하지 않는 경우(PasswordNotMatchException) 에 대해서 예외 발생
+     */
+
+    @PostMapping("/api/user/login")
+    public ResponseEntity<?> createToken(@RequestBody @Valid UserLogin userLogin, Errors errors) {
+
+        List<ResponseError> responseErrorList = new ArrayList<>();
+        if (errors.hasErrors()) {
+            errors.getAllErrors().stream().forEach((e) -> {
+                responseErrorList.add(ResponseError.of((FieldError)e));
+            });
+            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+        }
+
+        User user = userRepository.findByEmail(userLogin.getEmail())
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+
+        if (!PasswordUtils.equalPassword(userLogin.getPassword(), user.getPassword())) {
+            throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
+        }
+
+        return ResponseEntity.ok().build();
     }
 
 }
