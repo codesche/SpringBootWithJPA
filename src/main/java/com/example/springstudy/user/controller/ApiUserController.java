@@ -1,5 +1,7 @@
 package com.example.springstudy.user.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.example.springstudy.notice.entity.Notice;
 import com.example.springstudy.notice.entity.NoticeLike;
 import com.example.springstudy.notice.model.NoticeResponse;
@@ -14,16 +16,19 @@ import com.example.springstudy.user.model.UserInput;
 import com.example.springstudy.user.model.UserInputFind;
 import com.example.springstudy.user.model.UserInputPassword;
 import com.example.springstudy.user.model.UserLogin;
+import com.example.springstudy.user.model.UserLoginToken;
 import com.example.springstudy.user.model.UserResponse;
 import com.example.springstudy.user.model.UserUpdate;
 import com.example.springstudy.user.repository.UserRepository;
 import com.example.springstudy.util.PasswordUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.Jwt;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -380,6 +385,32 @@ public class ApiUserController {
      * - 비밀번호가 일치하지 않는 경우(PasswordNotMatchException) 에 대해서 예외 발생
      */
 
+//    @PostMapping("/api/user/login")
+//    public ResponseEntity<?> createToken(@RequestBody @Valid UserLogin userLogin, Errors errors) {
+//
+//        List<ResponseError> responseErrorList = new ArrayList<>();
+//        if (errors.hasErrors()) {
+//            errors.getAllErrors().stream().forEach((e) -> {
+//                responseErrorList.add(ResponseError.of((FieldError)e));
+//            });
+//            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+//        }
+//
+//        User user = userRepository.findByEmail(userLogin.getEmail())
+//            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+//
+//        if (!PasswordUtils.equalPassword(userLogin.getPassword(), user.getPassword())) {
+//            throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
+//        }
+//
+//        return ResponseEntity.ok().build();
+//    }
+
+    /**
+     * 44. 사용자의 이메일과 비밀번호를 통해서 JWT을 발행하는 로직을 작성해 보기
+     * - JWT 토큰발행
+     */
+
     @PostMapping("/api/user/login")
     public ResponseEntity<?> createToken(@RequestBody @Valid UserLogin userLogin, Errors errors) {
 
@@ -398,7 +429,15 @@ public class ApiUserController {
             throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
         }
 
-        return ResponseEntity.ok().build();
+        // 토큰발행시점
+        String token = JWT.create()
+            .withExpiresAt(new Date())
+            .withClaim("user_id", user.getId())
+            .withSubject(user.getUserName())
+            .withIssuer(user.getEmail())
+            .sign(Algorithm.HMAC512("Goldcampus".getBytes()));
+
+        return ResponseEntity.ok().body(UserLoginToken.builder().token(token).build());
     }
 
 }
