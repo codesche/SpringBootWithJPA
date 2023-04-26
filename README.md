@@ -1,5 +1,11 @@
 # SpringBoot/JPA project
 
+* SpringBoot + JPA 기초 다지기 위한 공부내용 정리
+1. RestAPI 개념 적용 및 실습
+2. JPA 통한 CRUD 기능 적용
+3. JWT 토큰 발행 관련 실습
+4. 소셜 로그인 기능 적용  
+
 ## Summary
 **1. Spring rest 컨트롤러를 통한 게시판 기능 구현**
 - [x] 주소요청에 대한 이해
