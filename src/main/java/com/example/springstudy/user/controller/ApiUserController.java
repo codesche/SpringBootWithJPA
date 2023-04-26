@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -170,33 +171,33 @@ public class ApiUserController {
      * - 동일한 이메일에 가입된 회원정보가 존재하는 경우 ExsitsEmailException 발생
      */
 
-    @PostMapping("/api/user")
-    public ResponseEntity<?> addUser(@RequestBody @Valid UserInput userInput, Errors errors) {
-
-        List<ResponseError> responseErrorList = new ArrayList<>();
-        if (errors.hasErrors()) {
-            errors.getAllErrors().stream().forEach((e) -> {
-                responseErrorList.add(ResponseError.of((FieldError)e));
-            });
-            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
-        }
-
-        if (userRepository.countByEmail(userInput.getEmail()) > 0) {
-            throw new ExistsEmailException("이미 존재하는 이메일입니다.");
-        }
-
-        User user = User.builder()
-                        .email(userInput.getUserName())
-                        .userName(userInput.getUserName())
-                        .phone(userInput.getPhone())
-                        .password(userInput.getPassword())
-                        .regDate(LocalDateTime.now())
-                        .build();
-
-        userRepository.save(user);
-
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("/api/user")
+//    public ResponseEntity<?> addUser(@RequestBody @Valid UserInput userInput, Errors errors) {
+//
+//        List<ResponseError> responseErrorList = new ArrayList<>();
+//        if (errors.hasErrors()) {
+//            errors.getAllErrors().stream().forEach((e) -> {
+//                responseErrorList.add(ResponseError.of((FieldError)e));
+//            });
+//            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+//        }
+//
+//        if (userRepository.countByEmail(userInput.getEmail()) > 0) {
+//            throw new ExistsEmailException("이미 존재하는 이메일입니다.");
+//        }
+//
+//        User user = User.builder()
+//                        .email(userInput.getUserName())
+//                        .userName(userInput.getUserName())
+//                        .phone(userInput.getPhone())
+//                        .password(userInput.getPassword())
+//                        .regDate(LocalDateTime.now())
+//                        .build();
+//
+//        userRepository.save(user);
+//
+//        return ResponseEntity.ok().build();
+//    }
 
     @ExceptionHandler(value = {ExistsEmailException.class, PasswordNotMatchException.class})
     public ResponseEntity<?> ExistsEmailExceptionHandler(RuntimeException exception) {
@@ -226,6 +227,45 @@ public class ApiUserController {
             .orElseThrow(() -> new PasswordNotMatchException("비밀번호가 일치하지 않습니다"));
 
         user.setPassword(userInputPassword.getNewPassword());
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 38. 회원가입시 비밀번호를 암호화하여 저장하는 API를 작성해 보기
+     */
+
+    private String getEncryptPassword(String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder.encode(password);
+    }
+
+    @PostMapping("/api/user")
+    public ResponseEntity<?> addUser(@RequestBody @Valid UserInput userInput, Errors errors) {
+
+        List<ResponseError> responseErrorList = new ArrayList<>();
+        if (errors.hasErrors()) {
+            errors.getAllErrors().stream().forEach((e) -> {
+                responseErrorList.add(ResponseError.of((FieldError)e));
+            });
+            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+        }
+
+        if (userRepository.countByEmail(userInput.getEmail()) > 0) {
+            throw new ExistsEmailException("이미 존재하는 이메일입니다.");
+        }
+
+        String encryptPassword = getEncryptPassword(userInput.getPassword());
+
+        User user = User.builder()
+                        .email(userInput.getUserName())
+                        .userName(userInput.getUserName())
+                        .phone(userInput.getPhone())
+                        .password(encryptPassword)
+                        .regDate(LocalDateTime.now())
+                        .build();
 
         userRepository.save(user);
 
