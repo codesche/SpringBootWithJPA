@@ -2,6 +2,7 @@ package com.example.springstudy.user.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.example.springstudy.notice.entity.Notice;
 import com.example.springstudy.notice.entity.NoticeLike;
 import com.example.springstudy.notice.model.NoticeResponse;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.Jwt;
@@ -473,6 +475,42 @@ public class ApiUserController {
             .sign(Algorithm.HMAC512("Goldcampus".getBytes()));
 
         return ResponseEntity.ok().body(UserLoginToken.builder().token(token).build());
+    }
+
+    /**
+     * 46. JWT 토큰 재발행(특정 정보 인증에 대한) 하는 API를 작성해 보기
+     * - 이미 발행된 JWT토큰을 통해서 토큰을 재발행하는 로직을 구현
+     * - 정상적인 회원에 대해서 재발행 진행
+     */
+    @PatchMapping("/api/user/login")
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+
+        String token = request.getHeader("G-TOKEN");
+        String email = "";
+
+        try {
+            email = JWT.require(Algorithm.HMAC512("Goldcampus".getBytes()))
+                    .build()
+                    .verify(token)
+                    .getIssuer();
+        } catch (SignatureVerificationException e) {
+            throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
+        }
+
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+
+        LocalDateTime expiredDateTime = LocalDateTime.now().plusMonths(1);
+        Date expiredDate = java.sql.Timestamp.valueOf(expiredDateTime);
+
+        String newToken = JWT.create()
+            .withExpiresAt(expiredDate)
+            .withClaim("user_id", user.getId())
+            .withSubject(user.getUserName())
+            .withIssuer(user.getEmail())
+            .sign(Algorithm.HMAC512("Goldcampus".getBytes()));
+
+        return ResponseEntity.ok().body(UserLoginToken.builder().token(newToken).build());
     }
 
 }
