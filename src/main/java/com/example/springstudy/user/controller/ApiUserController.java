@@ -21,6 +21,7 @@ import com.example.springstudy.user.model.UserLoginToken;
 import com.example.springstudy.user.model.UserResponse;
 import com.example.springstudy.user.model.UserUpdate;
 import com.example.springstudy.user.repository.UserRepository;
+import com.example.springstudy.util.JWTUtils;
 import com.example.springstudy.util.PasswordUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -511,6 +513,28 @@ public class ApiUserController {
             .sign(Algorithm.HMAC512("Goldcampus".getBytes()));
 
         return ResponseEntity.ok().body(UserLoginToken.builder().token(newToken).build());
+    }
+
+    /**
+     * 47. JWT 토큰에 대한 삭제를 요청하는 API를 작성해 보기
+     */
+
+    @DeleteMapping("/api/user/login")
+    public ResponseEntity<?> removeToken(@RequestHeader("G-TOKEN") String token) {
+
+        String email = "";
+
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (SignatureVerificationException e) {
+            return new ResponseEntity<>("토큰 정보가 정확하지 않습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 세션, 쿠키삭제
+        // 클라이언트 쿠키/로컬 스토리지/세션 스토리지
+        // 블랙리스트 작성
+
+        return ResponseEntity.ok().build();
     }
 
 }
