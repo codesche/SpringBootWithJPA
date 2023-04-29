@@ -28,8 +28,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -65,16 +67,46 @@ public class ApiAdminUserController {
      * }
      */
 
-    @GetMapping("/api/admin/user")
-    public ResponseMessage userList() {
+//    @GetMapping("/api/admin/user")
+//    public ResponseMessage userList() {
+//
+//        List<User> userList = userRepository.findAll();
+//        long totalUserCount = userRepository.count();
+//
+//        return ResponseMessage.builder()
+//                    .totalCount(totalUserCount)
+//                    .data(userList)
+//                    .build();
+//    }
 
-        List<User> userList = userRepository.findAll();
-        long totalUserCount = userRepository.count();
+    /**
+     * 49. 사용자 상세 조회를 조회하는 API를 아래 조건에 맞게 구현해 보기
+     * - ResponseMessage 클래스로 추상화해서 전송
+     * ```
+     * {
+     *     "header":
+     *     {
+     *         result: true|false
+     *         , resultCode: string
+     *         , message: error message or alert message
+     *         , status: http result code
+     *     },
+     *     "body": 내려야 할 데이터가 있는 경우 body를 통해서 전송
+     * }
+     * ```
+     */
 
-        return ResponseMessage.builder()
-                    .totalCount(totalUserCount)
-                    .data(userList)
-                    .build();
+    @GetMapping("/api/admin/user/{id}")
+    public ResponseEntity<?> userDetail(@PathVariable Long id) {
+
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()) {
+            return new ResponseEntity<>(ResponseMessage.fail(
+                "사용자 정보가 존재하지 않습니다."), HttpStatus.BAD_REQUEST);
+        }
+
+        return ResponseEntity.ok().body(ResponseMessage.success(user));
     }
+
 
 }
