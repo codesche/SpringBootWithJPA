@@ -20,6 +20,7 @@ import com.example.springstudy.user.model.UserInputPassword;
 import com.example.springstudy.user.model.UserLogin;
 import com.example.springstudy.user.model.UserLoginToken;
 import com.example.springstudy.user.model.UserResponse;
+import com.example.springstudy.user.model.UserSearch;
 import com.example.springstudy.user.model.UserUpdate;
 import com.example.springstudy.user.repository.UserRepository;
 import com.example.springstudy.util.JWTUtils;
@@ -106,6 +107,23 @@ public class ApiAdminUserController {
         }
 
         return ResponseEntity.ok().body(ResponseMessage.success(user));
+    }
+
+    /**
+     * 50. 사용자 목록 조회에 대한 검색을 리턴하는 API를 작성해 보기.
+     * - 이메일, 이름, 전화번호에 대한 검색결과를 리턴(각 항목은 or 조건)
+     */
+
+    @GetMapping("/api/admin/user/search")
+    public ResponseEntity<?> findUser(@RequestBody UserSearch userSearch) {
+
+        // email like '%' || email || '%'
+        // email like concat('%', email, '%')
+
+        List<User> userList = userRepository.findByEmailContainsOrPhoneContainsOrUserNameContains(
+            userSearch.getEmail(), userSearch.getPhone(), userSearch.getUserName());
+
+        return ResponseEntity.ok().body(ResponseMessage.success(userList));
     }
 
 
