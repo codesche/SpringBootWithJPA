@@ -1,5 +1,6 @@
 package com.example.springstudy.user.entity;
 
+import com.example.springstudy.user.model.UserStatus;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,5 +40,8 @@ public class User {
 
     @Column
     private LocalDateTime updateDate;
+
+    @Column
+    private UserStatus status;
 
 }
