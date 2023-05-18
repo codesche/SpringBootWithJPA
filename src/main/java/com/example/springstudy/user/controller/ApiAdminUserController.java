@@ -10,6 +10,7 @@ import com.example.springstudy.notice.model.ResponseError;
 import com.example.springstudy.notice.repository.NoticeLikeRepository;
 import com.example.springstudy.notice.repository.NoticeRepository;
 import com.example.springstudy.user.entity.User;
+import com.example.springstudy.user.entity.UserLoginHistory;
 import com.example.springstudy.user.exception.ExistsEmailException;
 import com.example.springstudy.user.exception.PasswordNotMatchException;
 import com.example.springstudy.user.exception.UserNotFoundException;
@@ -23,6 +24,7 @@ import com.example.springstudy.user.model.UserResponse;
 import com.example.springstudy.user.model.UserSearch;
 import com.example.springstudy.user.model.UserStatusInput;
 import com.example.springstudy.user.model.UserUpdate;
+import com.example.springstudy.user.repository.UserLoginHistoryRepository;
 import com.example.springstudy.user.repository.UserRepository;
 import com.example.springstudy.util.JWTUtils;
 import com.example.springstudy.util.PasswordUtils;
@@ -60,6 +62,8 @@ public class ApiAdminUserController {
     private final UserRepository userRepository;
 
     private final NoticeRepository noticeRepository;
+
+    private final UserLoginHistoryRepository userLoginHistoryRepository;
 
     /**
      * 48. 사용자 목록 과 사용자 수를 함께 내리는 REST API를 작성해 보기
@@ -173,8 +177,23 @@ public class ApiAdminUserController {
         }
 
         userRepository.delete(user);
-
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * 53. 사용자가 로그인을 했을때 이에 대한 접속 이력이 저장된다고 했을 때, 이에 대한 접속 이력을 조회하는 API를 작성해 보기
+     * - 접속이력 정보가 있다는 가정하에 API작성
+     * - UserLoginHistory 엔터티를 통해서 구현
+     */
+
+    @GetMapping("/api/admin/user/login/{id}/history")
+    public ResponseEntity<?> userLoginHistory() {
+
+        List<UserLoginHistory> userLoginHistories = userLoginHistoryRepository.findAll();
+
+        return ResponseEntity.ok().body(userLoginHistories);
+    }
+
+
 
 }
