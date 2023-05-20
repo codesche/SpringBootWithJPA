@@ -44,4 +44,7 @@ public class User {
     @Column
     private UserStatus status;
 
+    @Column
+    private boolean lockYn;
+
 }
