@@ -23,9 +23,11 @@ import com.example.springstudy.user.model.UserLoginToken;
 import com.example.springstudy.user.model.UserResponse;
 import com.example.springstudy.user.model.UserSearch;
 import com.example.springstudy.user.model.UserStatusInput;
+import com.example.springstudy.user.model.UserSummary;
 import com.example.springstudy.user.model.UserUpdate;
 import com.example.springstudy.user.repository.UserLoginHistoryRepository;
 import com.example.springstudy.user.repository.UserRepository;
+import com.example.springstudy.user.service.UserService;
 import com.example.springstudy.util.JWTUtils;
 import com.example.springstudy.util.PasswordUtils;
 import java.time.LocalDateTime;
@@ -39,6 +41,7 @@ import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -64,6 +67,8 @@ public class ApiAdminUserController {
     private final NoticeRepository noticeRepository;
 
     private final UserLoginHistoryRepository userLoginHistoryRepository;
+
+    private final UserService userService;
 
     /**
      * 48. 사용자 목록 과 사용자 수를 함께 내리는 REST API를 작성해 보기
@@ -243,6 +248,19 @@ public class ApiAdminUserController {
         userRepository.save(user);
 
         return ResponseEntity.ok().body(ResponseMessage.success());
+    }
+
+    /**
+     * ####56. 회원 전체수와 상태별 회원수에 대한 정보를 리턴하는 API를 작성해 보기
+     * - 서비스 클래스를 이용해서 작성해 보세요.
+     */
+
+    @GetMapping("/api/admin/user/status/count")
+    public HttpEntity<?> userStatusCount() {
+
+        UserSummary userSummary = userService.getUserStatusCount();
+
+        return ResponseEntity.ok().body(ResponseMessage.success(userSummary));
     }
 
 
