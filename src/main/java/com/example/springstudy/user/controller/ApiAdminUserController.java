@@ -256,11 +256,24 @@ public class ApiAdminUserController {
      */
 
     @GetMapping("/api/admin/user/status/count")
-    public HttpEntity<?> userStatusCount() {
+    public ResponseEntity<?> userStatusCount() {
 
         UserSummary userSummary = userService.getUserStatusCount();
 
         return ResponseEntity.ok().body(ResponseMessage.success(userSummary));
+    }
+
+    /**
+     * 57. 오늘의 사용자 가입 목록을 리턴하는 API를 작성해 보기
+     * - 서비스를 이용해서 REST API를 작성해 보세요.
+     */
+
+    @GetMapping("/api/admin/user/today")
+    public ResponseEntity<?> todayUser() {
+
+        List<User> users = userService.getTodayUsers();
+
+        return ResponseEntity.ok().body(ResponseMessage.success(users));
     }
 
 
