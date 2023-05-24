@@ -20,6 +20,7 @@ import com.example.springstudy.user.model.UserInputFind;
 import com.example.springstudy.user.model.UserInputPassword;
 import com.example.springstudy.user.model.UserLogin;
 import com.example.springstudy.user.model.UserLoginToken;
+import com.example.springstudy.user.model.UserNoticeCount;
 import com.example.springstudy.user.model.UserResponse;
 import com.example.springstudy.user.model.UserSearch;
 import com.example.springstudy.user.model.UserStatusInput;
@@ -275,6 +276,19 @@ public class ApiAdminUserController {
 
         return ResponseEntity.ok().body(ResponseMessage.success(users));
     }
+
+    /**
+     * 58. 사용자별 공지사항의 게시글수 리턴하는 API를 작성해 보기
+     */
+
+    @GetMapping("/api/admin/user/notice/count")
+    public ResponseEntity<?> userNoticeCount() {
+
+        List<UserNoticeCount> userNoticeCountList = userService.getUserNoticeCount();
+
+        return ResponseEntity.ok().body(ResponseMessage.success(userNoticeCountList));
+    }
+
 
 
 }

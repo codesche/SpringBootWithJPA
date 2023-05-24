@@ -1,6 +1,7 @@
 package com.example.springstudy.user.repository;
 
 import com.example.springstudy.user.entity.User;
+import com.example.springstudy.user.model.UserNoticeCount;
 import com.example.springstudy.user.model.UserStatus;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,4 +28,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u from User u where u.regDate between :startDate and :endDate ")
     List<User> findToday(LocalDateTime startDate, LocalDateTime endDate);
+
 }
