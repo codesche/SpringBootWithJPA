@@ -1,6 +1,7 @@
 package com.example.springstudy.user.service;
 
 import com.example.springstudy.user.entity.User;
+import com.example.springstudy.user.model.UserLogCount;
 import com.example.springstudy.user.model.UserNoticeCount;
 import com.example.springstudy.user.model.UserStatus;
 import com.example.springstudy.user.model.UserSummary;
@@ -45,6 +46,13 @@ public class UserServiceImpl implements UserService {
     public List<UserNoticeCount> getUserNoticeCount() {
 
         return userCustomRepository.findUserNoticeCount();
+
+    }
+
+    @Override
+    public List<UserLogCount> getUserLogCount() {
+
+        return userCustomRepository.findUserLogCount();
 
     }
 

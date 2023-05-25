@@ -18,6 +18,7 @@ import com.example.springstudy.user.model.ResponseMessage;
 import com.example.springstudy.user.model.UserInput;
 import com.example.springstudy.user.model.UserInputFind;
 import com.example.springstudy.user.model.UserInputPassword;
+import com.example.springstudy.user.model.UserLogCount;
 import com.example.springstudy.user.model.UserLogin;
 import com.example.springstudy.user.model.UserLoginToken;
 import com.example.springstudy.user.model.UserNoticeCount;
@@ -287,6 +288,18 @@ public class ApiAdminUserController {
         List<UserNoticeCount> userNoticeCountList = userService.getUserNoticeCount();
 
         return ResponseEntity.ok().body(ResponseMessage.success(userNoticeCountList));
+    }
+
+    /**
+     * 59. 사용자별 게시글수와 좋아요수를 리턴하는 API를 작성해 보기
+     */
+
+    @GetMapping("/api/admin/user/log/count")
+    public ResponseEntity<?> userLogCount() {
+
+        List<UserLogCount> userLogCounts = userService.getUserLogCount();
+
+        return ResponseEntity.ok().body(ResponseMessage.success(userLogCounts));
     }
 
 
