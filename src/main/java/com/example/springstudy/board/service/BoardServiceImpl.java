@@ -5,6 +5,7 @@ import com.example.springstudy.board.model.BoardTypeInput;
 import com.example.springstudy.board.model.ServiceResult;
 import com.example.springstudy.board.repository.BoardTypeRepository;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,27 @@ public class BoardServiceImpl implements BoardService {
             .build();
 
         boardTypeRepository.save(addBoardType);
+
+        return ServiceResult.success();
+    }
+
+    @Override
+    public ServiceResult updateBoard(long id, BoardTypeInput boardTypeInput) {
+
+        Optional<BoardType> optionalBoardType = boardTypeRepository.findById(id);
+        if (!optionalBoardType.isPresent()) {
+            return ServiceResult.fail("수정할 게시판타입이 없습니다.");
+        }
+
+        BoardType boardType = optionalBoardType.get();
+
+        if (boardType.getBoardName().equals(boardTypeInput.getName())) {
+            return ServiceResult.fail("수정할 이름이 동일한 게시판명 입니다.");
+        }
+
+        boardType.setBoardName(boardTypeInput.getName());
+        boardType.setUpdateDate(LocalDateTime.now());
+        boardTypeRepository.save(boardType);
 
         return ServiceResult.success();
     }
