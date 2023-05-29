@@ -92,5 +92,22 @@ public class ApiBoardNoticeController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 63. 게시판타입 삭제하는 API를 작성해 보기
+     * - 삭제시는 게시글이 있는 경우 삭제 안됨
+     */
+
+    @DeleteMapping("/api/board/{id}")
+    public ResponseEntity<?> deleteBoardType(@PathVariable Long id) {
+
+        ServiceResult result = boardService.deleteBoard(id);
+
+        if (!result.isResult()) {
+            return ResponseEntity.ok().body(ResponseMessage.fail(result.getMessage()));
+        }
+
+        return ResponseEntity.ok().body(ResponseMessage.success());
+    }
+
 
 }
