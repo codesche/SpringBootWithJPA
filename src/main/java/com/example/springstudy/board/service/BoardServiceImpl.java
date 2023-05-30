@@ -6,6 +6,7 @@ import com.example.springstudy.board.model.ServiceResult;
 import com.example.springstudy.board.repository.BoardRepository;
 import com.example.springstudy.board.repository.BoardTypeRepository;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -75,6 +76,11 @@ public class BoardServiceImpl implements BoardService {
         boardTypeRepository.delete(boardType);
 
         return ServiceResult.success();
+    }
+
+    @Override
+    public List<BoardType> getAllBoardType() {
+        return boardTypeRepository.findAll();
     }
 
 }

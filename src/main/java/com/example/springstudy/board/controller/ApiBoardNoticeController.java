@@ -97,7 +97,7 @@ public class ApiBoardNoticeController {
      * - 삭제시는 게시글이 있는 경우 삭제 안됨
      */
 
-    @DeleteMapping("/api/board/{id}")
+    @DeleteMapping("/api/board/type/{id}")
     public ResponseEntity<?> deleteBoardType(@PathVariable Long id) {
 
         ServiceResult result = boardService.deleteBoard(id);
@@ -107,6 +107,18 @@ public class ApiBoardNoticeController {
         }
 
         return ResponseEntity.ok().body(ResponseMessage.success());
+    }
+
+    /**
+     * 64. 게시판타입의 목록을 리턴하는 API를 작성해 보기
+     */
+
+    @GetMapping("/api/board/type")
+    public ResponseEntity<?> boardType() {
+
+        List<BoardType> boardTypeList = boardService.getAllBoardType();
+
+        return ResponseEntity.ok().body(ResponseMessage.success(boardTypeList));
     }
 
 
