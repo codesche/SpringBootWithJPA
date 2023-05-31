@@ -2,6 +2,7 @@ package com.example.springstudy.board.controller;
 
 import com.example.springstudy.board.entity.BoardType;
 import com.example.springstudy.board.model.BoardTypeInput;
+import com.example.springstudy.board.model.BoardTypeUsing;
 import com.example.springstudy.board.model.ServiceResult;
 import com.example.springstudy.board.service.BoardService;
 import com.example.springstudy.notice.entity.Notice;
@@ -119,6 +120,22 @@ public class ApiBoardNoticeController {
         List<BoardType> boardTypeList = boardService.getAllBoardType();
 
         return ResponseEntity.ok().body(ResponseMessage.success(boardTypeList));
+    }
+
+    /**
+     * 65. 게시판타입의 사용여부를 설정하는 API를 작성해 보기
+     */
+
+    @PatchMapping("/api/board/type/{id}/using")
+    public ResponseEntity<?> enableBoardType(@PathVariable Long id, @RequestBody BoardTypeUsing boardTypeUsing) {
+
+        ServiceResult result = boardService.setBoardTypeUsing(id, boardTypeUsing);
+
+        if (!result.isResult()) {
+            return ResponseEntity.ok().body(ResponseMessage.fail(result.getMessage()));
+        }
+
+        return ResponseEntity.ok().body(ResponseMessage.success());
     }
 
 

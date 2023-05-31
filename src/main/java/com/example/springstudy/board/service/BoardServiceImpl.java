@@ -2,6 +2,7 @@ package com.example.springstudy.board.service;
 
 import com.example.springstudy.board.entity.BoardType;
 import com.example.springstudy.board.model.BoardTypeInput;
+import com.example.springstudy.board.model.BoardTypeUsing;
 import com.example.springstudy.board.model.ServiceResult;
 import com.example.springstudy.board.repository.BoardRepository;
 import com.example.springstudy.board.repository.BoardTypeRepository;
@@ -81,6 +82,22 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public List<BoardType> getAllBoardType() {
         return boardTypeRepository.findAll();
+    }
+
+    @Override
+    public ServiceResult setBoardTypeUsing(Long id, BoardTypeUsing boardTypeUsing) {
+
+        Optional<BoardType> optionalBoardType = boardTypeRepository.findById(id);
+        if (!optionalBoardType.isPresent()) {
+            return ServiceResult.fail("삭제할 게시판타입이 없습니다.");
+        }
+
+        BoardType boardType = optionalBoardType.get();
+
+        boardType.setUsingYn(boardTypeUsing.isUsingYn());
+        boardTypeRepository.save(boardType);
+
+        return ServiceResult.success();
     }
 
 }
