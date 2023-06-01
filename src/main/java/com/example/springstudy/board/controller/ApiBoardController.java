@@ -1,34 +1,20 @@
 package com.example.springstudy.board.controller;
 
 import com.example.springstudy.board.entity.BoardType;
+import com.example.springstudy.board.model.BoardTypeCount;
 import com.example.springstudy.board.model.BoardTypeInput;
 import com.example.springstudy.board.model.BoardTypeUsing;
 import com.example.springstudy.board.model.ServiceResult;
 import com.example.springstudy.board.service.BoardService;
-import com.example.springstudy.notice.entity.Notice;
-import com.example.springstudy.notice.exception.AlreadyDeletedException;
-import com.example.springstudy.notice.exception.DuplicateNoticeException;
-import com.example.springstudy.notice.exception.NoticeNotFoundException;
-import com.example.springstudy.notice.model.NoticeDeleteInput;
-import com.example.springstudy.notice.model.NoticeInput;
-import com.example.springstudy.notice.model.NoticeModel;
 import com.example.springstudy.notice.model.ResponseError;
-import com.example.springstudy.notice.repository.NoticeRepository;
 import com.example.springstudy.user.model.ResponseMessage;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-public class ApiBoardNoticeController {
+public class ApiBoardController {
 
     private final BoardService boardService;
 
@@ -136,6 +122,18 @@ public class ApiBoardNoticeController {
         }
 
         return ResponseEntity.ok().body(ResponseMessage.success());
+    }
+
+    /**
+     * 66. 게시판별 작성된 게시글의 개수를 리턴하는 API를 작성해 보기
+     */
+
+    @GetMapping("/api/board/type/count")
+    public ResponseEntity<?> boardTypeCount() {
+
+        List<BoardTypeCount> list = boardService.getBoardTypeCount();
+
+        return ResponseEntity.ok().body(list);
     }
 
 

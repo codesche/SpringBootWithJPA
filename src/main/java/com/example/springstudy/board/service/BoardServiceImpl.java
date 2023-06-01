@@ -1,10 +1,12 @@
 package com.example.springstudy.board.service;
 
 import com.example.springstudy.board.entity.BoardType;
+import com.example.springstudy.board.model.BoardTypeCount;
 import com.example.springstudy.board.model.BoardTypeInput;
 import com.example.springstudy.board.model.BoardTypeUsing;
 import com.example.springstudy.board.model.ServiceResult;
 import com.example.springstudy.board.repository.BoardRepository;
+import com.example.springstudy.board.repository.BoardTypeCustomRepository;
 import com.example.springstudy.board.repository.BoardTypeRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
 public class BoardServiceImpl implements BoardService {
 
     private final BoardTypeRepository boardTypeRepository;
+
+    private final BoardTypeCustomRepository boardTypeCustomRepository;
     private final BoardRepository boardRepository;
 
     @Override
@@ -98,6 +102,13 @@ public class BoardServiceImpl implements BoardService {
         boardTypeRepository.save(boardType);
 
         return ServiceResult.success();
+    }
+
+    @Override
+    public List<BoardTypeCount> getBoardTypeCount() {
+
+        return boardTypeCustomRepository.getBoardTypeCount();
+
     }
 
 }
