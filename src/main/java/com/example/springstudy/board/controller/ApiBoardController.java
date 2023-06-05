@@ -148,4 +148,17 @@ public class ApiBoardController {
         return ResponseEntity.ok().body(result);
     }
 
+    /**
+     * 68. 최상단에 게시된 게시글을 최상단에서 해제하는 API를 작성해 보기
+     */
+
+    @PatchMapping("/api/board/{id}/top/clear")
+    public ResponseEntity<?> boardPostTopClear(@PathVariable Long id) {
+
+        ServiceResult result = boardService.setBoardTop(id, false);
+
+        return ResponseEntity.ok().body(result);
+    }
+
+
 }

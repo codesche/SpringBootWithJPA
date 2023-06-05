@@ -121,8 +121,12 @@ public class BoardServiceImpl implements BoardService {
         }
 
         Board board = optionalBoard.get();
-        if (board.isTopYn()) {
-            return ServiceResult.fail("이미 게시글이 최상단에 배치되어 있습니다.");
+        if (board.isTopYn() == topYn) {
+            if (topYn) {
+                return ServiceResult.fail("이미 게시글이 최상단에 배치되어 있습니다.");
+            } else {
+                return ServiceResult.fail("이미 게시글이 최상단에 배치가 해제되어 있습니다.");
+            }
         }
 
         board.setTopYn(true);
