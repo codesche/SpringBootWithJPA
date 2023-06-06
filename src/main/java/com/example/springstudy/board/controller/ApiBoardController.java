@@ -1,11 +1,13 @@
 package com.example.springstudy.board.controller;
 
 import com.example.springstudy.board.entity.BoardType;
+import com.example.springstudy.board.model.BoardPeriod;
 import com.example.springstudy.board.model.BoardTypeCount;
 import com.example.springstudy.board.model.BoardTypeInput;
 import com.example.springstudy.board.model.BoardTypeUsing;
 import com.example.springstudy.board.model.ServiceResult;
 import com.example.springstudy.board.service.BoardService;
+import com.example.springstudy.common.model.ResponseResult;
 import com.example.springstudy.notice.model.ResponseError;
 import com.example.springstudy.user.model.ResponseMessage;
 import java.util.List;
@@ -160,5 +162,20 @@ public class ApiBoardController {
         return ResponseEntity.ok().body(result);
     }
 
+    /**
+     * 69. 게시글의 게시기간을 시작일과 종료일로 설정하는 API를 작성해 보기
+     */
+
+    @PatchMapping("/api/board/{id}/publish")
+    public ResponseEntity<?> boardPeriod(@PathVariable Long id, @RequestBody BoardPeriod boardPeriod) {
+
+        ServiceResult result = boardService.setBoardPeriod(id, boardPeriod);
+
+        if (!result.isResult()) {
+            return ResponseResult.fail(result.getMessage());
+        }
+
+        return ResponseResult.success();
+    }
 
 }

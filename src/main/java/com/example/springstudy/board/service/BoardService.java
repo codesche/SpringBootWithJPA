@@ -1,6 +1,7 @@
 package com.example.springstudy.board.service;
 
 import com.example.springstudy.board.entity.BoardType;
+import com.example.springstudy.board.model.BoardPeriod;
 import com.example.springstudy.board.model.BoardTypeCount;
 import com.example.springstudy.board.model.BoardTypeInput;
 import com.example.springstudy.board.model.BoardTypeUsing;
@@ -31,4 +32,9 @@ public interface BoardService {
      * 게시글을 최상단에 배치
      */
     ServiceResult setBoardTop(Long id, boolean topYn);
+
+    /**
+     * 게시글의 게시기간을 설정
+     */
+    ServiceResult setBoardPeriod(Long id, BoardPeriod boardPeriod);
 }

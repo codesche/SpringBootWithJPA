@@ -1,6 +1,7 @@
 package com.example.springstudy.board.entity;
 
 import com.example.springstudy.user.entity.User;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,5 +45,11 @@ public class Board {
 
     @Column
     private boolean topYn;
+
+    @Column
+    private LocalDate publishStartDate;
+
+    @Column
+    private LocalDate publishEndDate;
 
 }
