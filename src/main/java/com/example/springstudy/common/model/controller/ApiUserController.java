@@ -1,4 +1,4 @@
-package com.example.springstudy.user.controller;
+package com.example.springstudy.common.model.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

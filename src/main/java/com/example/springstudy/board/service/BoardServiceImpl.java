@@ -1,15 +1,19 @@
 package com.example.springstudy.board.service;
 
 import com.example.springstudy.board.entity.Board;
+import com.example.springstudy.board.entity.BoardHits;
 import com.example.springstudy.board.entity.BoardType;
 import com.example.springstudy.board.model.BoardPeriod;
 import com.example.springstudy.board.model.BoardTypeCount;
 import com.example.springstudy.board.model.BoardTypeInput;
 import com.example.springstudy.board.model.BoardTypeUsing;
 import com.example.springstudy.board.model.ServiceResult;
+import com.example.springstudy.board.repository.BoardHitsRepository;
 import com.example.springstudy.board.repository.BoardRepository;
 import com.example.springstudy.board.repository.BoardTypeCustomRepository;
 import com.example.springstudy.board.repository.BoardTypeRepository;
+import com.example.springstudy.user.entity.User;
+import com.example.springstudy.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -21,9 +25,10 @@ import org.springframework.stereotype.Service;
 public class BoardServiceImpl implements BoardService {
 
     private final BoardTypeRepository boardTypeRepository;
-
     private final BoardTypeCustomRepository boardTypeCustomRepository;
     private final BoardRepository boardRepository;
+    private final BoardHitsRepository boardHitsRepository;
+    private final UserRepository userRepository;
 
     @Override
     public ServiceResult addBoard(BoardTypeInput boardTypeInput) {
@@ -149,6 +154,35 @@ public class BoardServiceImpl implements BoardService {
         board.setPublishStartDate(boardPeriod.getStartDate());
         board.setPublishEndDate(boardPeriod.getEndDate());
         boardRepository.save(board);
+
+        return ServiceResult.success();
+    }
+
+    @Override
+    public ServiceResult setBoardHits(Long id, String email) {
+
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if (!optionalBoard.isPresent()) {
+            return ServiceResult.fail("게시글이 존재하지 않습니다.");
+        }
+
+        Board board = optionalBoard.get();
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        User user = optionalUser.get();
+
+        if (boardHitsRepository.countByBoardAndUser(board, user) > 0) {
+            return ServiceResult.fail("이미 조회수가 있습니다.");
+        }
+
+        boardHitsRepository.save(BoardHits.builder()
+                .board(board)
+                .user(user)
+                .regDate(LocalDateTime.now())
+                .build());
 
         return ServiceResult.success();
     }
