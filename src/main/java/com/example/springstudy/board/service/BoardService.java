@@ -42,4 +42,9 @@ public interface BoardService {
      * 게시글의 조회수를 증가
      */
     ServiceResult setBoardHits(Long id, String email);
+
+    /**
+     * 게시글의 좋아요
+     */
+    ServiceResult setBoardLike(Long id, String email);
 }
