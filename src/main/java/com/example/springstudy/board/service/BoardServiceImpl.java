@@ -1,14 +1,17 @@
 package com.example.springstudy.board.service;
 
 import com.example.springstudy.board.entity.Board;
+import com.example.springstudy.board.entity.BoardBadReport;
 import com.example.springstudy.board.entity.BoardHits;
 import com.example.springstudy.board.entity.BoardLike;
 import com.example.springstudy.board.entity.BoardType;
+import com.example.springstudy.board.model.BoardBadReportInput;
 import com.example.springstudy.board.model.BoardPeriod;
 import com.example.springstudy.board.model.BoardTypeCount;
 import com.example.springstudy.board.model.BoardTypeInput;
 import com.example.springstudy.board.model.BoardTypeUsing;
 import com.example.springstudy.board.model.ServiceResult;
+import com.example.springstudy.board.repository.BoardBadReportRepository;
 import com.example.springstudy.board.repository.BoardHitsRepository;
 import com.example.springstudy.board.repository.BoardLikeRepository;
 import com.example.springstudy.board.repository.BoardRepository;
@@ -32,6 +35,8 @@ public class BoardServiceImpl implements BoardService {
     private final BoardHitsRepository boardHitsRepository;
     private final UserRepository userRepository;
     private final BoardLikeRepository boardLikeRepository;
+
+    private final BoardBadReportRepository boardBadReportRepository;
 
     @Override
     public ServiceResult addBoard(BoardTypeInput boardTypeInput) {
@@ -243,6 +248,40 @@ public class BoardServiceImpl implements BoardService {
         BoardLike boardLike = optionalBoardLike.get();
 
         boardLikeRepository.delete(boardLike);
+        return ServiceResult.success();
+    }
+
+    @Override
+    public ServiceResult addBadReport(Long id, String email,
+        BoardBadReportInput boardBadReportInput) {
+
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if (!optionalBoard.isPresent()) {
+            return ServiceResult.fail("게시글이 존재하지 않습니다.");
+        }
+
+        Board board = optionalBoard.get();
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        User user = optionalUser.get();
+
+        BoardBadReport boardBadReport = BoardBadReport.builder()
+                .userId(user.getId())
+                .userName(user.getUserName())
+                .userEmail(user.getEmail())
+                .boardId(board.getId())
+                .boardUserId(board.getUser().getId())
+                .boardTitle(board.getTitle())
+                .boardContents(board.getContents())
+                .boardRegDate(board.getRegDate())
+                .comments(boardBadReportInput.getComments())
+                .build();
+
+        boardBadReportRepository.save(boardBadReport);
+
         return ServiceResult.success();
     }
 
