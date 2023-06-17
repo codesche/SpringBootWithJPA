@@ -1,5 +1,6 @@
 package com.example.springstudy.board.service;
 
+import com.example.springstudy.board.entity.BoardBadReport;
 import com.example.springstudy.board.entity.BoardType;
 import com.example.springstudy.board.model.BoardBadReportInput;
 import com.example.springstudy.board.model.BoardPeriod;
@@ -58,4 +59,9 @@ public interface BoardService {
      * 게시글을 신고하는 기능
      */
     ServiceResult addBadReport(Long id, String email, BoardBadReportInput boardBadReportInput);
+
+    /**
+     * 신고된 게시글정보 목록
+     */
+    List<BoardBadReport> badReportList();
 }
